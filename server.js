@@ -1,13 +1,15 @@
-let express = require('express');
-let bodyParser = require('body-parser');
+const express = require('express');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 const MongoClient = require('mongodb').MongoClient;
-let ObjectID = require('mongodb').ObjectID;
+const ObjectID = require('mongodb').ObjectID;
+const FilmsModel = require('./server/schemes/films');
 
 let cors = require('cors');
 let path = require('path');
 
 let app = express();
-let db;
 
 app.use(cors());
 app.use(express.static(path.join(__dirname, '../')));
@@ -19,84 +21,61 @@ app.get('/', function (req, res) {
 	res.send('Hello API');
 })
 
-app.get('/films', function (req, res) {
-	db.collection('films').find().toArray(function (err, docs) {
-		for (var i = 0; i < docs.length; i++){
-				docs[i].id = docs[i]._id;
-				delete docs[i]._id;
-		}
+mongoose.connect('mongodb://localhost:27017/myapi', function (err) {
+	if (err) throw err;
+  console.log('Successfully connected');
 
-		if (err) {
-			console.log(err);
-			return res.sendStatus(500)
-		}
-		res.send(docs);
+	app.get('/films', async function (req, res) {
+		const films = await FilmsModel.find().exec();
+		res.send(films.map(film => film.toClient()))
 	})
-})
 
-app.get('/films/:id', function (req, res) {
-	db.collection('films').findOne({ _id: ObjectID(req.params.id) }, function (err, docs) {
-		docs.id = docs._id;
-		delete docs._id
-		if (err) {
-			console.log(err);
-			return res.sendStatus(500);
-		}
-		res.send(docs);
+	app.get('/films/:id', async function (req, res) {
+		let film = await FilmsModel.findById( req.params.id , function (err, docs) {
+			res.send(docs.toClient());
+		})
 	})
-})
 
-app.post('/films', function (req, res) {
-	let artist = {
-		newid: req.body._id,
-		name: req.body.name
-	};
-
-	db.collection('films').insertOne(req.body, function (err, result) {
-		if (err) {
-			console.log(err);
-			return res.sendStatus(500);
-		}
-		res.send({newid: req.body._id});
+	app.post('/films', function (req, res) {
+		let newFilm = new FilmsModel({
+				id: new mongoose.Types.ObjectId(),
+				rank: req.body.rank,
+				title: req.body.title,
+				year: req.body.year,
+				votes: req.body.votes,
+				rating: req.body.rating,
+		});
+		newFilm.save();
 	})
-})
 
-app.put('/films/:id', function (req, res) {
-	db.collection('films').updateOne(
-		{ _id: ObjectID(req.params.id)},
-		{$set: {rank: req.body.rank, title: req.body.title, year: req.body.year, votes: req.body.votes, rating: req.body.rating}},
-		{
-			upsert: false,
-			multi: false
-		},
-		function (err) {
-			if (err) {
-				console.log(err);
-				return res.send({ status:"error" });
+	app.put('/films/:id', function (req, res) {
+		FilmsModel.findOneAndUpdate(
+			{ _id: req.params.id },
+			{
+				$set: {
+					rank: req.body.rank,
+					title: req.body.title,
+					year: req.body.year,
+					votes: req.body.votes,
+					rating: req.body.rating
+				}
+			},
+			{
+				new: true
 			}
-			res.send({});
-		}
-	)
-})
+		)
+		.then(doc => {
+			console.log(doc);
+		})
+	})
 
-app.delete('/films/:id', function (req, res) {
-	db.collection('films').deleteOne(
-		{ _id: ObjectID(req.params.id)},
-		function (err) {
-			if (err) {
-				return res.send({ status:"error" });
-			}
-			res.send({});
-		}
-	)
-})
+	app.delete('/films/:id', async function (req, res) {
+		console.log(req.params);
+		await FilmsModel.findOneAndRemove (
+			{ _id: req.params.id }
+		)
+	})
 
-MongoClient.connect('mongodb://localhost:27017/myapi', { useNewUrlParser: true }, function (err, database) {
-
-	if (err) {
-		return console.log(err);
-	}
-	db = database.db('films');
 	app.listen(3012, function () {
 		console.log('API app started');
 	})

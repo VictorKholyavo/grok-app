@@ -16,37 +16,33 @@ export default class ListView extends JetView {
 					view: "toolbar",
 					css: "webix_header webix_dark",
 					cols: [
+						{},
 						{
 							view: "button",
 							type: "form",
 							value: "Export to Excel",
-							width: 200,
-							css: {
-								float: "right"
-							},
+							autowidth: true,
 							click: () => {
-								webix.toExcel(this.$$("datasetA"));
+								webix.toExcel(this.$getDatatable());
 							}
 						},
 						{
 							view: "button",
 							type: "form",
 							value: "Refresh",
-							width: 200,
-							css: {
-								float: "right"
-							},
+							autowidth: true,
 							click: () => {
 								const datatable = this.$$("datasetA");
-								datatable.clearAll();
+								films.clearAll();
+								films.load("http://localhost:3012/films");
 								datatable.showProgress({
 									type: "bottom",
-									delay: 1000,
+									delay: 100,
 									hide: true
 								});
-								setTimeout(function () {
-									datatable.parse(films);
-								}, 1000);
+								// setTimeout(function () {
+								// 	datatable.parse(films);
+								// }, 1000);
 							}
 						}
 					]
@@ -67,14 +63,14 @@ export default class ListView extends JetView {
 					onClick: {
 						"wxi-trash": (e, id) => {
 							if (id) {
-								films.remove(id);
+								films.remove(id.row);
 							}
 						}
 					},
 					on: {
 						onItemClick: (id) => {
-							let values = films.getItem(id);
-							this.win2.showWindow(values);
+							let values = films.getItem(id.row);
+							this.formForFilms.showWindow(values);
 						}
 					}
 				},
@@ -86,8 +82,7 @@ export default class ListView extends JetView {
 						float: "right"
 					},
 					click: () => {
-						let filled = {rank: "1", title: "The departed", year: "2006", votes: "112321", rating: "8.5"};
-						films.add(filled);
+						this.formForFilms.showWindow();
 					}
 				}
 			]
@@ -96,7 +91,10 @@ export default class ListView extends JetView {
 	init() {
 		this.$$("datasetA").sync(films);
 		films.filter();
-		this.win2 = this.ui(FormView);
+		this.formForFilms = this.ui(FormView);
 		webix.extend(this.$$("datasetA"), webix.ProgressBar);
+	}
+	$getDatatable() {
+		return this.$$("datasetA");
 	}
 }
