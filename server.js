@@ -82,9 +82,10 @@ mongoose.connect('mongodb://localhost:27017/myapi', function (err) {
 //---------------------------------------------------------------------//
 
 	app.get('/users', async function (req, res) {
-		let order = req.query.sort ? [ "name", req.query.sort.name ] : [];
+		let order = req.query.sort ? {name: req.query.sort.name } : {};
+		console.log(order);
 		const users = await UsersModel.find().exec();
-		await UsersModel.find(function (err, docs) {
+		await UsersModel.find({}, null, {sort: order}, function (err, docs) {
 			let start = req.query.start;
 			let count = req.query.count;
 			let arr = [];
@@ -92,7 +93,6 @@ mongoose.connect('mongodb://localhost:27017/myapi', function (err) {
 			for (let i = start; i <= +start + +count; i++) {
 				arr.push(docs[i]);
 			}
-			console.log(docs.length);
 			res.send({"pos": start, "data": arr.map(user => user.toClient()), "total_count": 700});
 		})
 		//res.send(users.map(user => user.toClient()))
