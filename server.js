@@ -1,14 +1,18 @@
-let express = require('express');
-let bodyParser = require('body-parser');
+const express = require('express');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 const MongoClient = require('mongodb').MongoClient;
-let ObjectID = require('mongodb').ObjectID;
+const ObjectID = require('mongodb').ObjectID;
+const FilmsModel = require('./server/schemes/films');
+const UsersModel = require('./server/schemes/users');
+// let usersJSON = require('./generated.json');
+// UsersModel.insertMany(usersJSON);
 
 let cors = require('cors');
 let path = require('path');
 
 let app = express();
-let db;
-let dbDynamic;
 
 app.use(cors());
 app.use(express.static(path.join(__dirname, '../')));
@@ -20,147 +24,149 @@ app.get('/', function (req, res) {
 	res.send('Hello API');
 })
 
-//FILMS for datasetA//
+mongoose.connect('mongodb://localhost:27017/myapi', function (err) {
+	if (err) throw err;
+  console.log('Successfully connected');
 
-app.get('/films', function (req, res) {
-	db.collection('films').find().toArray(function (err, docs) {
-		for (var i = 0; i < docs.length; i++){
-				docs[i].id = docs[i]._id;
-				delete docs[i]._id;
-		}
-
-		if (err) {
-			console.log(err);
-			return res.sendStatus(500)
-		}
-		res.send(docs);
+	app.get('/films', async function (req, res) {
+		const films = await FilmsModel.find().exec();
+		res.send(films.map(film => film.toClient()))
 	})
-})
 
-app.get('/films/:id', function (req, res) {
-	db.collection('films').findOne({ _id: ObjectID(req.params.id) }, function (err, docs) {
-		docs.id = docs._id;
-		delete docs._id
-		if (err) {
-			console.log(err);
-			return res.sendStatus(500);
-		}
-		res.send(docs);
-	})
-})
-
-app.post('/films', function (req, res) {
-	db.collection('films').insertOne(req.body, function (err, result) {
-		if (err) {
-			console.log(err);
-			return res.sendStatus(500);
-		}
-		res.send({newid: req.body._id});
-	})
-})
-
-app.put('/films/:id', function (req, res) {
-	console.log('films');
-	db.collection('films').updateOne(
-		{ _id: ObjectID(req.params.id)},
-		{$set: {rank: req.body.rank, title: req.body.title, year: req.body.year, votes: req.body.votes, rating: req.body.rating}},
-		{
-			upsert: false,
-			multi: true
-		},
-		function (err) {
-			if (err) {
-				console.log(err);
-				return res.send({ status:"error" });
-			}
-			res.send({});
-		}
-	)
-})
-
-app.delete('/films/:id', function (req, res) {
-	db.collection('films').deleteOne(
-		{ _id: ObjectID(req.params.id)},
-		function (err) {
-			if (err) {
-				return res.send({ status:"error" });
-			}
-			res.send({});
-		}
-	)
-})
-
-//USERS for datasetB//
-
-app.get('/users', function (req, res) {
-	let order = req.query.sort ? ["name", req.query.sort.name ] : [];
-	dbDynamic.collection('users').find().sort(order).toArray(function (err, docs) {
-
-		let start = req.query.start;
-		let count = req.query.count;
-		let arr = [];
-
-		for (var i = 0; i < docs.length; i++){
-				docs[i].id = docs[i]._id;
-				delete docs[i]._id;
-		}
-
-		for (let i = start; i <= +start + +count; i++) {
-			arr.push(docs[i]);
-		}
-		res.send({"pos": start, "data": arr, "total_count": 778});
-
-		if (err) {
-			console.log(err);
-			return res.sendStatus(500)
-		}
-	})
-})
-
-app.get('/users/:id', function (req, res) {
-	dbDynamic.collection('users').findOne(
-		{ _id: req.params.id },
-		function (err, docs) {
-			docs.id = docs._id;
-			delete docs._id
-			res.send(docs)
-		}
-	)
-})
-
-app.put('/users/:id', function (req, res) {
-	dbDynamic.collection('users').updateOne(
-		{ _id: req.params.id},
-		{$set: {name: req.body.name, age: req.body.age, gender: req.body.gender, company: req.body.company, favoriteFruit: req.body.favoriteFruit}},
-		{
-			upsert: false,
-			multi: true
-		},
-		function (err, result) {
-			if (err) return res.send({ status:"error" });
-			res.send({});
+	app.get('/films/:id', async function (req, res) {
+		let film = await FilmsModel.findById( req.params.id , function (err, docs) {
+			res.send(docs.toClient());
 		})
-})
+	})
 
-app.delete('/users/:id', function (req, res) {
-	dbDynamic.collection('users').deleteOne(
-		{ _id: ObjectID(req.params.id)},
-		function (err) {
-			if (err) {
-				return res.send({ status:"error" });
+	app.post('/films', function (req, res) {
+		let newFilm = new FilmsModel({
+				id: new mongoose.Types.ObjectId(),
+				rank: req.body.rank,
+				title: req.body.title,
+				year: req.body.year,
+				votes: req.body.votes,
+				rating: req.body.rating,
+		});
+		newFilm.save();
+	})
+
+	app.put('/films/:id', function (req, res) {
+		FilmsModel.findOneAndUpdate(
+			{ _id: req.params.id },
+			{
+				$set: {
+					rank: req.body.rank,
+					title: req.body.title,
+					year: req.body.year,
+					votes: req.body.votes,
+					rating: req.body.rating
+				}
+			},
+			{
+				new: true
 			}
-			res.send({});
-		}
-	)
-})
+		)
+		.then(doc => {
+			console.log(doc);
+		})
+	})
 
-MongoClient.connect('mongodb://localhost:27017/myapi', { useNewUrlParser: true }, function (err, database) {
-	if (err) {
-		return console.log(err);
-	}
-	db = database.db('films');
-	dbDynamic = database.db('users');
+	app.delete('/films/:id', async function (req, res) {
+		console.log(req.params);
+		await FilmsModel.findOneAndRemove (
+			{ _id: req.params.id }
+		)
+	})
+
+//---------------------------------------------------------------------//
+
+	app.get('/users', async function (req, res) {
+		let order = req.query.sort ? [ "name", req.query.sort.name ] : [];
+		const users = await UsersModel.find().exec();
+		await UsersModel.find(function (err, docs) {
+			let start = req.query.start;
+			let count = req.query.count;
+			let arr = [];
+
+			for (let i = start; i <= +start + +count; i++) {
+				arr.push(docs[i]);
+			}
+			console.log(docs.length);
+			res.send({"pos": start, "data": arr.map(user => user.toClient()), "total_count": 700});
+		})
+		//res.send(users.map(user => user.toClient()))
+	})
+	app.post('/users', function (req, res) {
+		let newUser = new UsersModel({
+				id: new mongoose.Types.ObjectId(),
+				name: req.body.name,
+				age: req.body.age,
+				gender: req.body.gender,
+				company: req.body.company,
+				favoriteFruit: req.body.favoriteFruit,
+		});
+		newUser.save();
+	})
+
+	app.put('/users/:id', function (req, res) {
+		UsersModel.findOneAndUpdate(
+			{ _id: req.params.id },
+			{
+				$set: {
+					name: req.body.name,
+					age: req.body.age,
+					gender: req.body.gender,
+					company: req.body.company,
+					favoriteFruit: req.body.favoriteFruit
+				}
+			},
+			{
+				new: true
+			}
+		)
+		.then(doc => {
+			console.log(doc);
+		})
+	})
+
+	app.delete('/users/:id', async function (req, res) {
+		await UsersModel.findOneAndRemove (
+			{ _id: req.params.id }
+		)
+	})
+
 	app.listen(3012, function () {
 		console.log('API app started');
 	})
 })
+
+
+//USERS for datasetB//
+
+
+// app.get('/users/:id', function (req, res) {
+// 	dbDynamic.collection('users').findOne(
+// 		{ _id: req.params.id },
+// 		function (err, docs) {
+// 			docs.id = docs._id;
+// 			delete docs._id
+// 			res.send(docs)
+// 		}
+// 	)
+// })
+//
+// app.put('/users/:id', function (req, res) {
+// 	dbDynamic.collection('users').updateOne(
+// 		{ _id: req.params.id},
+// 		{$set: {name: req.body.name, age: req.body.age, gender: req.body.gender, company: req.body.company, favoriteFruit: req.body.favoriteFruit}},
+// 		{
+// 			upsert: false,
+// 			multi: true
+// 		},
+// 		function (err, result) {
+// 			if (err) return res.send({ status:"error" });
+// 			res.send({});
+// 		})
+// })
+//

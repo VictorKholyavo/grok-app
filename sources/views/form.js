@@ -78,16 +78,31 @@ export default class FormView extends JetView {
 	}
 	showWindow(values) {
 		let form = this.$$("form");
-		form.setValues(values);
+		let formTemplate = this.$$("formTemplate");
+
 		this.getRoot().show();
+		if (values) {
+			films.waitData.then(() => {
+				form.setValues(values);
+			});
+			formTemplate.define({template: "Edit film"});
+		}
+
+		else {
+			formTemplate.define({template: "Add film"});
+		}
 	}
 	init() {
 	}
 	addOrSave() {
 		if (this.$$("form").validate()) {
+
 			const filled = this.$$("form").getValues();
 			if (filled.id) {
 				films.updateItem(filled.id, filled);
+			}
+			else {
+				films.add(filled);
 			}
 			webix.message("All is correct");
 			this.$$("win2").hide();
