@@ -1,6 +1,7 @@
 import {JetView} from "webix-jet";
 import {films} from "models/films";
 import FormView from "./form";
+import {categories} from "models/categories";
 
 function likeCompare(value, filter) {
 	value = value.toString().toLowerCase();
@@ -67,6 +68,7 @@ export default class ListView extends JetView {
 							const form = this.formForFilms;
 							let values = films.getItem(id.row);
 							this.formForFilms.showWindow(values, function(data) {
+								data.category = categories.getItem(data.category).category;
 								films.updateItem(data.id, data);
 								form.hideOrNotHide();
 							});
@@ -83,6 +85,7 @@ export default class ListView extends JetView {
 					click: () => {
 						const form = this.formForFilms;
 						this.formForFilms.showWindow("", function(data) {
+							data.category = categories.getItem(data.category).category;
 							films.add(data);
 							form.hideOrNotHide();
 						});
@@ -93,6 +96,7 @@ export default class ListView extends JetView {
 	}
 	init() {
 		this.$getDatatable().sync(films);
+		films.filter();
 		this.formForFilms = this.ui(FormView);
 		webix.extend(this.$getDatatable(), webix.ProgressBar);
 		this.on(this.app, "addOrUpdateFilm", (data) => {

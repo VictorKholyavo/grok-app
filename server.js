@@ -8,6 +8,8 @@ const FilmsModel = require('./server/schemas/films');
 const UsersModel = require('./server/schemas/users');
 const FilmsController = require('./server/controllers/films');
 const UsersController = require('./server/controllers/users');
+const CategoriesController = require('./server/controllers/categories');
+
 // let usersJSON = require('./generated.json');
 // UsersModel.insertMany(usersJSON);
 
@@ -138,6 +140,8 @@ mongoose.connect('mongodb://localhost:27017/myapi', function (err) {
 	// 		{ _id: req.params.id }
 	// 	)
 	// })
+
+	app.use('/categories', CategoriesController);
 
 	app.listen(3012, function () {
 		console.log('API app started');

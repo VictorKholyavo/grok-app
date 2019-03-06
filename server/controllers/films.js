@@ -6,7 +6,6 @@ const mongoose = require('mongoose');
 app.get('/', async function (req, res) {
 	const films = await FilmsModel.find().exec();
 	res.send(films.map(film => film.toClient()))
-
 })
 
 app.get('/:id', async function (req, res) {
@@ -16,12 +15,14 @@ app.get('/:id', async function (req, res) {
 })
 
 app.post('/', function (req, res) {
+	console.log(req.body);
 	let newFilm = new FilmsModel({
 		rank: req.body.rank,
 		title: req.body.title,
 		year: req.body.year,
 		votes: req.body.votes,
 		rating: req.body.rating,
+		category: req.body.category
 	});
 	newFilm.save();
 })
@@ -35,7 +36,8 @@ app.put('/:id', function (req, res) {
 				title: req.body.title,
 				year: req.body.year,
 				votes: req.body.votes,
-				rating: req.body.rating
+				rating: req.body.rating,
+				category: req.body.category
 			}
 		}
 	)

@@ -1,4 +1,5 @@
 import {JetView} from "webix-jet";
+import {categories} from "models/categories";
 
 export default class FormView extends JetView {
 	config() {
@@ -31,6 +32,18 @@ export default class FormView extends JetView {
 					view: "text",
 					name: "rating",
 					label: "Rating"
+				},
+				{
+					view: "richselect",
+					name: "category",
+					label: "Category",
+					options: {
+						body: {
+							template: "#category#",
+							data: categories,
+						}
+					},
+
 				},
 				{
 					cols: [
@@ -88,7 +101,6 @@ export default class FormView extends JetView {
 		else {
 			formTemplate.define({template: "Add film"});
 		}
-
 		this.onSubmit = function(data) {
 			if (this.$getForm().validate()) {
 				filled(data);
