@@ -34,7 +34,8 @@ export default class FormView extends JetView {
 					label: "Rating"
 				},
 				{
-					view: "richselect",
+					view: "combo",
+					localId: "category",
 					name: "category",
 					label: "Category",
 					options: {
@@ -91,6 +92,9 @@ export default class FormView extends JetView {
 			}
 		};
 	}
+	$getForm() {
+		return this.$$("form");
+	}
 	showWindow(values, filled) {
 		let formTemplate = this.$$("formTemplate");
 		this.getRoot().show();
@@ -109,9 +113,7 @@ export default class FormView extends JetView {
 	}
 	init() {
 	}
-	$getForm() {
-		return this.$$("form");
-	}
+
 	hideOrNotHide() {
 		if (this.$getForm().validate()) {
 			webix.message("All is correct");

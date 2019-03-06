@@ -8,6 +8,12 @@ app.get('/', async function (req, res) {
 	res.send(categories.map(category => category.toClient()));
 })
 
+app.get('/:id', async function (req, res) {
+	let category = await CategoriesModel.findById(req.params.id, function (err, docs) {
+		res.send(docs.toClient());
+	})
+})
+
 app.post('/', function (req, res) {
 	let newCategory = new CategoriesModel({
 		category: req.body.category,
