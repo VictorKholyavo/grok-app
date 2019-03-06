@@ -5,7 +5,6 @@ const mongoose = require('mongoose');
 
 app.get('/', async function (req, res) {
 	const films = await FilmsModel.find().exec();
-	//FilmsModel.deleteMany({}, function (err) {})
 	res.send(films.map(film => film.toClient()))
 
 })
@@ -18,7 +17,6 @@ app.get('/:id', async function (req, res) {
 
 app.post('/', function (req, res) {
 	let newFilm = new FilmsModel({
-		id: new mongoose.Types.ObjectId(),
 		rank: req.body.rank,
 		title: req.body.title,
 		year: req.body.year,
@@ -39,9 +37,6 @@ app.put('/:id', function (req, res) {
 				votes: req.body.votes,
 				rating: req.body.rating
 			}
-		},
-		{
-			new: true
 		}
 	)
 	.then(doc => {

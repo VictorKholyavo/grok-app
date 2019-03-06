@@ -6,7 +6,8 @@ const MongoClient = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
 const FilmsModel = require('./server/schemas/films');
 const UsersModel = require('./server/schemas/users');
-//const FilmsController = require('./server/controllers/films');
+const FilmsController = require('./server/controllers/films');
+const UsersController = require('./server/controllers/users');
 // let usersJSON = require('./generated.json');
 // UsersModel.insertMany(usersJSON);
 
@@ -33,7 +34,7 @@ mongoose.connect('mongodb://localhost:27017/myapi', function (err) {
 	// 	const films = await FilmsModel.find().exec();
 	// 	res.send(films.map(film => film.toClient()))
 	// })
-	app.use('/films', require('./server/controllers/films'));
+	app.use('/films', FilmsController);
 
 	// app.get('/films/:id', async function (req, res) {
 	// 	let film = await FilmsModel.findById( req.params.id , function (err, docs) {
@@ -82,7 +83,7 @@ mongoose.connect('mongodb://localhost:27017/myapi', function (err) {
 	// })
 
 //---------------------------------------------------------------------//
-	app.use('/users', require('./server/controllers/users'));
+	app.use('/users', UsersController);
 	// app.get('/users', async function (req, res) {
 	// 	let order = req.query.sort ? {name: req.query.sort.name } : {};
 	// 	console.log(order);
@@ -99,44 +100,44 @@ mongoose.connect('mongodb://localhost:27017/myapi', function (err) {
 	// 	})
 	// 	//res.send(users.map(user => user.toClient()))
 	// })
-	app.post('/users', function (req, res) {
-		let newUser = new UsersModel({
-				id: new mongoose.Types.ObjectId(),
-				name: req.body.name,
-				age: req.body.age,
-				gender: req.body.gender,
-				company: req.body.company,
-				favoriteFruit: req.body.favoriteFruit,
-		});
-		newUser.save();
-	})
+	// app.post('/users', function (req, res) {
+	// 	let newUser = new UsersModel({
+	// 			id: new mongoose.Types.ObjectId(),
+	// 			name: req.body.name,
+	// 			age: req.body.age,
+	// 			gender: req.body.gender,
+	// 			company: req.body.company,
+	// 			favoriteFruit: req.body.favoriteFruit,
+	// 	});
+	// 	newUser.save();
+	// })
 
-	app.put('/users/:id', function (req, res) {
-		UsersModel.findOneAndUpdate(
-			{ _id: req.params.id },
-			{
-				$set: {
-					name: req.body.name,
-					age: req.body.age,
-					gender: req.body.gender,
-					company: req.body.company,
-					favoriteFruit: req.body.favoriteFruit
-				}
-			},
-			{
-				new: true
-			}
-		)
-		.then(doc => {
-			console.log(doc);
-		})
-	})
+	// app.put('/users/:id', function (req, res) {
+	// 	UsersModel.findOneAndUpdate(
+	// 		{ _id: req.params.id },
+	// 		{
+	// 			$set: {
+	// 				name: req.body.name,
+	// 				age: req.body.age,
+	// 				gender: req.body.gender,
+	// 				company: req.body.company,
+	// 				favoriteFruit: req.body.favoriteFruit
+	// 			}
+	// 		},
+	// 		{
+	// 			new: true
+	// 		}
+	// 	)
+	// 	.then(doc => {
+	// 		console.log(doc);
+	// 	})
+	// })
 
-	app.delete('/users/:id', async function (req, res) {
-		await UsersModel.findOneAndRemove (
-			{ _id: req.params.id }
-		)
-	})
+	// app.delete('/users/:id', async function (req, res) {
+	// 	await UsersModel.findOneAndRemove (
+	// 		{ _id: req.params.id }
+	// 	)
+	// })
 
 	app.listen(3012, function () {
 		console.log('API app started');

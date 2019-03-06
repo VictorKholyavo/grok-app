@@ -16,8 +16,27 @@ app.get('/', async function (req, res) {
 		}
 		res.send({"pos": start, "data": arr.map(user => user.toClient()), "total_count": 700});
 	})
-	//res.send(users.map(user => user.toClient()))
-})
+});
 
+app.put('/:id', async function (req, res) {
+	await UsersModel.findOneAndUpdate(
+		{ _id: req.params.id },
+		{
+			$set: {
+				name: req.body.name,
+				age: req.body.age,
+				gender: req.body.gender,
+				company: req.body.company,
+				favoriteFruit: req.body.favoriteFruit
+			}
+		},
+		{
+			new: true
+		}
+	)
+	.then(doc => {
+		console.log(doc);
+	})
+})
 
 module.exports = app
