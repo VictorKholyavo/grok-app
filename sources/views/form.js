@@ -36,6 +36,7 @@ export default class FormView extends JetView {
 				{
 					view: "richselect",
 					name: "category",
+					localId: "category",
 					label: "Category",
 					options: {
 						body: {
@@ -95,6 +96,10 @@ export default class FormView extends JetView {
 		let formTemplate = this.$$("formTemplate");
 		this.getRoot().show();
 		if (values) {
+			console.log(values);
+			let a = categories.getItem(values.categories);
+			console.log(a);
+			this.$$("category").setValue(values.category)
 			this.$getForm().setValues(values);
 			formTemplate.define({template: "Edit film"});
 		}
