@@ -1,5 +1,4 @@
 import {JetView} from "webix-jet";
-import {films} from "models/films";
 
 export default class FormView extends JetView {
 	config() {
@@ -39,7 +38,10 @@ export default class FormView extends JetView {
 							view: "button",
 							localId: "updateButton",
 							value: "Save",
-							click: () => { this.addOrSave(); }
+							click: () => {
+								const values = this.$getForm().getValues();
+								this.onSubmit(values);
+							}
 						},
 						{
 							view: "button",
@@ -70,40 +72,36 @@ export default class FormView extends JetView {
 			body: form,
 			on: {
 				onHide: () => {
-					this.$$("form").clear();
-					this.$$("form").clearValidation();
+					this.$getForm().clear();
+					this.$getForm().clearValidation();
 				}
 			}
 		};
 	}
-	showWindow(values) {
-		let form = this.$$("form");
+	showWindow(values, filled) {
 		let formTemplate = this.$$("formTemplate");
-
 		this.getRoot().show();
 		if (values) {
-			films.waitData.then(() => {
-				form.setValues(values);
-			});
+			this.$getForm().setValues(values);
 			formTemplate.define({template: "Edit film"});
 		}
-
 		else {
 			formTemplate.define({template: "Add film"});
 		}
+
+		this.onSubmit = function(data) {
+			if (this.$getForm().validate()) {
+				filled(data);
+			}
+		};
 	}
 	init() {
 	}
-	addOrSave() {
-		if (this.$$("form").validate()) {
-
-			const filled = this.$$("form").getValues();
-			if (filled.id) {
-				films.updateItem(filled.id, filled);
-			}
-			else {
-				films.add(filled);
-			}
+	$getForm() {
+		return this.$$("form");
+	}
+	hideOrNotHide() {
+		if (this.$getForm().validate()) {
 			webix.message("All is correct");
 			this.$$("win2").hide();
 		}

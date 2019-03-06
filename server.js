@@ -38,7 +38,6 @@ mongoose.connect('mongodb://localhost:27017/myapi', function (err) {
 
 	app.post('/films', function (req, res) {
 		let newFilm = new FilmsModel({
-				id: new mongoose.Types.ObjectId(),
 				rank: req.body.rank,
 				title: req.body.title,
 				year: req.body.year,
@@ -59,9 +58,6 @@ mongoose.connect('mongodb://localhost:27017/myapi', function (err) {
 					votes: req.body.votes,
 					rating: req.body.rating
 				}
-			},
-			{
-				new: true
 			}
 		)
 		.then(doc => {

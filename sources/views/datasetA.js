@@ -32,17 +32,7 @@ export default class ListView extends JetView {
 							value: "Refresh",
 							autowidth: true,
 							click: () => {
-								const datatable = this.$$("datasetA");
-								films.clearAll();
-								films.load("http://localhost:3012/films");
-								datatable.showProgress({
-									type: "bottom",
-									delay: 100,
-									hide: true
-								});
-								// setTimeout(function () {
-								// 	datatable.parse(films);
-								// }, 1000);
+								films.refresh();
 							}
 						}
 					]
@@ -69,8 +59,12 @@ export default class ListView extends JetView {
 					},
 					on: {
 						onItemClick: (id) => {
+							const form = this.formForFilms;
 							let values = films.getItem(id.row);
-							this.formForFilms.showWindow(values);
+							this.formForFilms.showWindow(values, function(data) {
+								films.updateItem(data.id, data);
+								form.hideOrNotHide();
+							});
 						}
 					}
 				},
@@ -82,17 +76,28 @@ export default class ListView extends JetView {
 						float: "right"
 					},
 					click: () => {
-						this.formForFilms.showWindow();
+						const form = this.formForFilms;
+						this.formForFilms.showWindow("", function(data) {
+							films.add(data);
+							form.hideOrNotHide();
+						});
 					}
 				}
 			]
 		};
 	}
 	init() {
-		this.$$("datasetA").sync(films);
-		films.filter();
+		this.$getDatatable().sync(films);
 		this.formForFilms = this.ui(FormView);
-		webix.extend(this.$$("datasetA"), webix.ProgressBar);
+		webix.extend(this.$getDatatable(), webix.ProgressBar);
+		this.on(this.app, "addOrUpdateFilm", (data) => {
+			if (data[0] && data[1]) {
+				films.updateItem(data[0], data[1]);
+			}
+			else {
+				films.add(data[0]);
+			}
+		});
 	}
 	$getDatatable() {
 		return this.$$("datasetA");
