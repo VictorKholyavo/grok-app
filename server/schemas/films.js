@@ -17,6 +17,13 @@ ModelSchema.methods.toClient = function toClient() {
 	return obj;
 }
 
+// ModelSchema.statics.all = function (cb) {
+// 	this.find().exec(function (err, docs) {
+// 		if (err) return cb(err)
+// 		cb(null, docs)
+// 	});
+// }
+
 // Компилируем модель из схемы
 const FilmsModel = mongoose.model('FilmsModel', ModelSchema );
 
