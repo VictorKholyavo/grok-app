@@ -47,13 +47,15 @@ mongoose.connect(`mongodb://${process.env.DB_HOST || 'localhost'}:27017/myapir`,
 	app.post('/films', async (req, res) => {
 		try {
 			let newFilm = await new FilmsModel({
-					rank: req.body.rank,
-					title: req.body.title,
-					year: req.body.year,
-					votes: req.body.votes,
-					rating: req.body.rating,
+				rank: req.body.rank,
+				title: req.body.title,
+				year: req.body.year,
+				votes: req.body.votes,
+				rating: req.body.rating,
 			});
-			newFilm.save();
+			newFilm.save(function(err, docs) {
+				res.send(newFilm.toClient());
+			});
 		} catch (error) {
 			res.status(500).send("Something broke");
 		}
@@ -61,7 +63,7 @@ mongoose.connect(`mongodb://${process.env.DB_HOST || 'localhost'}:27017/myapir`,
 
 	app.put('/films/:id', async (req, res) => {
 		try {
-			FilmsModel.findOneAndUpdate(
+			await FilmsModel.findOneAndUpdate(
 				{ _id: req.params.id },
 				{
 					$set: {
@@ -72,17 +74,18 @@ mongoose.connect(`mongodb://${process.env.DB_HOST || 'localhost'}:27017/myapir`,
 						rating: req.body.rating
 					}
 				}
-			)
-		} catch (catch) {
+			);
+		} catch (error) {
 			res.status(500).send("Something broke");
 		}
 	})
 
 	app.delete('/films/:id', async (req, res) => {
 		try {
-			await FilmsModel.findOneAndRemove (
-				{ _id: req.params.id }
-			)
+			await FilmsModel.findOneAndRemove(
+				{ _id: req.params.id },
+			);
+			res.send({id: req.params.id})
 		} catch (error) {
 			res.status(500).send("Something broke");
 		}

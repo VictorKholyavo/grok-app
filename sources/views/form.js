@@ -55,6 +55,10 @@ export default class FormView extends JetView {
 				}
 			],
 			rules: {
+				rank: webix.rules.isNumber,
+				year: webix.rules.isNumber,
+				votes: webix.rules.isNumber,
+				rating: webix.rules.isNumber,
 				$all: webix.rules.isNotEmpty
 			}
 		};
@@ -66,7 +70,7 @@ export default class FormView extends JetView {
 			position: "center",
 			modal: true,
 			head: {
-				template: " ",
+				template: "aaaa",
 				localId: "formTemplate"
 			},
 			body: form,
@@ -79,7 +83,7 @@ export default class FormView extends JetView {
 		};
 	}
 	showWindow(values, filled) {
-		let formTemplate = this.$$("formTemplate");
+		const formTemplate = this.$$("formTemplate");
 		this.getRoot().show();
 		if (values) {
 			this.$getForm().setValues(values);
@@ -88,7 +92,7 @@ export default class FormView extends JetView {
 		else {
 			formTemplate.define({template: "Add film"});
 		}
-
+		formTemplate.refresh();
 		this.onSubmit = function(data) {
 			if (this.$getForm().validate()) {
 				filled(data);
