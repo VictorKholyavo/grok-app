@@ -2,11 +2,11 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const ModelSchema = new Schema({
-	rank: String,
+	rank: Number,
   title: String,
-  year: String,
-	votes: String,
-	rating: String,
+  year: Number,
+	votes: Number,
+	rating: Number,
 });
 
 ModelSchema.methods.toClient = function toClient() {
@@ -16,13 +16,6 @@ ModelSchema.methods.toClient = function toClient() {
 	delete obj._id;
 	return obj;
 }
-
-// ModelSchema.statics.all = function (cb) {
-// 	this.find().exec(function (err, docs) {
-// 		if (err) return cb(err)
-// 		cb(null, docs)
-// 	});
-// }
 
 // Компилируем модель из схемы
 const FilmsModel = mongoose.model('FilmsModel', ModelSchema );

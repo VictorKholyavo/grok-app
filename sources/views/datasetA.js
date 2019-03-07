@@ -14,16 +14,13 @@ export default class ListView extends JetView {
 			rows: [
 				{
 					view: "toolbar",
-					css: "webix_header webix_dark",
 					cols: [
+						{},
 						{
 							view: "button",
 							type: "form",
 							value: "Export to Excel",
-							width: 200,
-							css: {
-								float: "right"
-							},
+							autowidth: true,
 							click: () => {
 								webix.toExcel(this.$getDatatable());
 							}
@@ -32,10 +29,7 @@ export default class ListView extends JetView {
 							view: "button",
 							type: "form",
 							value: "Refresh",
-							width: 200,
-							css: {
-								float: "right"
-							},
+							autowidth: true,
 							click: () => {
 								films.refresh();
 							}
@@ -60,6 +54,7 @@ export default class ListView extends JetView {
 							if (id) {
 								films.remove(id.row);
 							}
+							return false;
 						}
 					},
 					on: {
@@ -95,14 +90,6 @@ export default class ListView extends JetView {
 		this.$getDatatable().sync(films);
 		this.formForFilms = this.ui(FormView);
 		webix.extend(this.$getDatatable(), webix.ProgressBar);
-		this.on(this.app, "addOrUpdateFilm", (data) => {
-			if (data[0] && data[1]) {
-				films.updateItem(data[0], data[1]);
-			}
-			else {
-				films.add(data[0]);
-			}
-		});
 	}
 	$getDatatable() {
 		return this.$$("datasetA");

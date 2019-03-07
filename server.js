@@ -26,7 +26,7 @@ app.get('/', function (req, res) {
 	res.send('Hello API');
 })
 
-mongoose.connect('mongodb://localhost:27017/myapi', function (err) {
+mongoose.connect(`mongodb://${process.env.DB_HOST || 'localhost'}:27017/myapir`, function (err) {
 	if (err) throw err;
   console.log('Successfully connected');
 
