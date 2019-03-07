@@ -2,6 +2,8 @@ const FilmsModel = require('../schemas/films');
 const express = require('express');
 let app = express();
 const mongoose = require('mongoose');
+const fs = require('fs');
+const grid = require('gridfs-stream');
 
 app.get('/', async function (req, res) {
 	const films = await FilmsModel.find().exec();
@@ -15,19 +17,22 @@ app.get('/:id', async function (req, res) {
 })
 
 app.post('/', function (req, res) {
-	console.log(req.body);
 	let newFilm = new FilmsModel({
 		rank: req.body.rank,
 		title: req.body.title,
 		year: req.body.year,
 		votes: req.body.votes,
 		rating: req.body.rating,
-		category: req.body.category
+		category: req.body.category,
+		photo: req.body.photo
 	});
 	newFilm.save();
 })
 
 app.put('/:id', function (req, res) {
+	//console.log(req.body);
+	//let image = fs.readFileSync(process.env.IMAGE);
+	//console.log(image);
 	FilmsModel.findOneAndUpdate(
 		{ _id: req.params.id },
 		{
@@ -37,12 +42,13 @@ app.put('/:id', function (req, res) {
 				year: req.body.year,
 				votes: req.body.votes,
 				rating: req.body.rating,
-				category: req.body.category
+				category: req.body.category,
+				photo: req.body.photo
 			}
 		}
 	)
 	.then(doc => {
-
+		console.log(doc);
 	})
 });
 

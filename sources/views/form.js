@@ -97,9 +97,7 @@ export default class FormView extends JetView {
 		this.getRoot().show();
 		if (values) {
 			console.log(values);
-			let a = categories.getItem(values.categories);
-			console.log(a);
-			this.$$("category").setValue(values.category)
+			// this.$$("category").setValue(values.category)
 			this.$getForm().setValues(values);
 			formTemplate.define({template: "Edit film"});
 		}

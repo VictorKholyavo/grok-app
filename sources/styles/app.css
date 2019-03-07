@@ -60,3 +60,8 @@
 .templateRow {
 	display: block;
 }
+
+.columnSettings {
+	width: 33%;
+	display: inline-block;
+}
