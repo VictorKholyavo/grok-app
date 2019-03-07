@@ -1,6 +1,5 @@
 import {JetView} from "webix-jet";
 import {films} from "models/films";
-import {categories} from "models/categories";
 
 export default class ListView extends JetView {
 	config() {
@@ -25,15 +24,13 @@ export default class ListView extends JetView {
 									view:"dataview",
 									localId: "dataview",
 									template: (obj) => {
-										return "<div class='columnSettings'></div><div class='columnSettings'><span>Title: " + obj.title + "</span></div><div class='columnSettings'><span>Year: " + obj.year + "</span></div>"
+										return "<div class='columnSettings'></div><div class='columnSettings'><span>Title: " + obj.title + "</span></div><div class='columnSettings'><span>Year: " + obj.year + "</span></div>";
 									},
-							  //  data:,
-							   	xCount:3, //the number of items in a row
-							  //  yCount:4, //the number of items in a column
-							    type:{
-							        width: 261,
-							        height: 90
-							    },
+									xCount:3,
+									type:{
+										width: 261,
+										height: 90
+									},
 									select: true,
 									on:{
 										onAfterSelect: (id) => {
@@ -43,9 +40,7 @@ export default class ListView extends JetView {
 								},
 								{
 									rows: [
-										{
-
-										},
+										{},
 										{
 											view:"uploader",
 											localId:"uploader_1",
@@ -62,15 +57,11 @@ export default class ListView extends JetView {
 														const values = films.getItem(id);
 														values.photo = event.target.result;
 														films.updateItem(id, values);
-														console.log(values);
 														this.$$("photo").setValues({src: event.target.result});
-												//	this.$$("photo").setValues({src: event.target.result});
-												//		this.$$("formContact").setValues(values);
 													};
 													reader.readAsDataURL(file);
 													return false;
 												}
-
 												// onAfterFileAdd: (file) => {
 												// 	let id = this.getParam("id", true);
 												// 	let values = films.getItem(id);
@@ -80,26 +71,24 @@ export default class ListView extends JetView {
 												// 	films.updateItem(id, values);
 												// 	// file.ContactID = id;
 												// 	// files.add(file);
-
 											}
 										}
 									]
 								},
 								{
 
-										view: "template",
-										localId: "photo",
-										name: "Photo",
-										template: (obj)=> {
-											let photo = "";
-											if (obj.src) {
-												photo = "<img class='photo' src="+obj.src+">";
-											}
-											else {
-												photo = "<img class='defaultPhotoBig'>";
-											}
-											return photo;
-
+									view: "template",
+									localId: "photo",
+									name: "Photo",
+									template: (obj)=> {
+										let photo = "";
+										if (obj.src) {
+											photo = "<img class='photo' src="+obj.src+">";
+										}
+										else {
+											photo = "<img class='defaultPhotoBig'>";
+										}
+										return photo;
 									},
 								}
 							]
@@ -121,6 +110,6 @@ export default class ListView extends JetView {
 		films.waitData.then(() => {
 			const values = films.getItem(id);
 			this.$$("photo").setValues({src: values.photo});
-		})
+		});
 	}
 }

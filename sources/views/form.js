@@ -69,6 +69,10 @@ export default class FormView extends JetView {
 				}
 			],
 			rules: {
+				rank: webix.rules.isNumber,
+				year: webix.rules.isNumber,
+				votes: webix.rules.isNumber,
+				rating: webix.rules.isNumber,
 				$all: webix.rules.isNotEmpty
 			}
 		};
@@ -96,14 +100,13 @@ export default class FormView extends JetView {
 		let formTemplate = this.$$("formTemplate");
 		this.getRoot().show();
 		if (values) {
-			console.log(values);
-			// this.$$("category").setValue(values.category)
 			this.$getForm().setValues(values);
 			formTemplate.define({template: "Edit film"});
 		}
 		else {
 			formTemplate.define({template: "Add film"});
 		}
+		formTemplate.refresh();
 		this.onSubmit = function(data) {
 			if (this.$getForm().validate()) {
 				filled(data);
@@ -115,13 +118,9 @@ export default class FormView extends JetView {
 	$getForm() {
 		return this.$$("form");
 	}
+	
 	hideOrNotHide() {
-		if (this.$getForm().validate()) {
-			webix.message("All is correct");
-			this.$$("win2").hide();
-		}
-		else {
-			webix.message({type: "error", text: "Form data is invalid"});
-		}
+		webix.message("All is correct");
+		this.$$("win2").hide();
 	}
 }
