@@ -25,51 +25,67 @@ mongoose.connect('mongodb://localhost:27017/myapi', function (err) {
 	if (err) throw err;
   console.log('Successfully connected');
 
-	app.get('/films', async function (req, res) {
-		const films = await FilmsModel.find().exec();
-		res.send(films.map(film => film.toClient()))
+	app.get('/films', async (req, res) => {
+		try {
+			const films = await FilmsModel.find().exec();
+			res.send(films.map(film => film.toClient()));
+		} catch (error) {
+			res.status(500).send("Something broke");
+		}
 	})
 
-	app.get('/films/:id', async function (req, res) {
-		let film = await FilmsModel.findById( req.params.id , function (err, docs) {
-			res.send(docs.toClient());
-		})
+	app.get('/films/:id', async (req, res) =>  {
+		try {
+			let film = await FilmsModel.findById(req.params.id , function (err, docs) {
+				res.send(docs.toClient());
+			})
+		} catch(error) {
+			res.status(500).send("Something broke");
+		}
 	})
 
-	app.post('/films', function (req, res) {
-		let newFilm = new FilmsModel({
-				rank: req.body.rank,
-				title: req.body.title,
-				year: req.body.year,
-				votes: req.body.votes,
-				rating: req.body.rating,
-		});
-		newFilm.save();
-	})
-
-	app.put('/films/:id', function (req, res) {
-		FilmsModel.findOneAndUpdate(
-			{ _id: req.params.id },
-			{
-				$set: {
+	app.post('/films', async (req, res) => {
+		try {
+			let newFilm = await new FilmsModel({
 					rank: req.body.rank,
 					title: req.body.title,
 					year: req.body.year,
 					votes: req.body.votes,
-					rating: req.body.rating
-				}
-			}
-		)
-		.then(doc => {
-			console.log(doc);
-		})
+					rating: req.body.rating,
+			});
+			newFilm.save();
+		} catch (error) {
+			res.status(500).send("Something broke");
+		}
 	})
 
-	app.delete('/films/:id', async function (req, res) {
-		console.log(req.params);
-		await FilmsModel.findOneAndRemove (
-			{ _id: req.params.id }
-		)
+	app.put('/films/:id', async (req, res) => {
+		try {
+			FilmsModel.findOneAndUpdate(
+				{ _id: req.params.id },
+				{
+					$set: {
+						rank: req.body.rank,
+						title: req.body.title,
+						year: req.body.year,
+						votes: req.body.votes,
+						rating: req.body.rating
+					}
+				}
+			)
+		} catch (catch) {
+			res.status(500).send("Something broke");
+		}
+	})
+
+	app.delete('/films/:id', async (req, res) => {
+		try {
+			await FilmsModel.findOneAndRemove (
+				{ _id: req.params.id }
+			)
+		} catch (error) {
+			res.status(500).send("Something broke");
+		}
 	})
 
 	app.listen(3012, function () {
