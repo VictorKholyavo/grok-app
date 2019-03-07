@@ -2,11 +2,11 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const ModelSchema = new Schema({
-	rank: String,
+	rank: Number,
   title: String,
-  year: String,
-	votes: String,
-	rating: String,
+  year: Number,
+	votes: Number,
+	rating: Number,
 });
 
 ModelSchema.methods.toClient = function toClient() {

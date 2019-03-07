@@ -101,12 +101,7 @@ export default class FormView extends JetView {
 		return this.$$("form");
 	}
 	hideOrNotHide() {
-		if (this.$getForm().validate()) {
-			webix.message("All is correct");
-			this.$$("win2").hide();
-		}
-		else {
-			webix.message({type: "error", text: "Form data is invalid"});
-		}
+		webix.message("All is correct");
+		this.$$("win2").hide();
 	}
 }
