@@ -35,12 +35,12 @@ export default class FormView extends JetView {
 				},
 				{
 					view: "richselect",
-					name: "category",
+					name: "categoryID",
 					localId: "category",
 					label: "Category",
 					options: {
 						body: {
-							template: "#category#",
+						//	template: "#category#",
 							data: categories,
 						}
 					},
@@ -118,7 +118,7 @@ export default class FormView extends JetView {
 	$getForm() {
 		return this.$$("form");
 	}
-	
+
 	hideOrNotHide() {
 		webix.message("All is correct");
 		this.$$("win2").hide();

@@ -63,7 +63,9 @@ export default class ListView extends JetView {
 							const form = this.formForFilms;
 							let values = films.getItem(id.row);
 							this.formForFilms.showWindow(values, function(data) {
-								data.category = categories.getItem(data.category).category;
+								if (categories.getItem(data.categoryID)) {
+									data.categoryID = categories.getItem(data.categoryID).id;
+								}
 								films.updateItem(data.id, data);
 								form.hideOrNotHide();
 							});
@@ -80,7 +82,7 @@ export default class ListView extends JetView {
 					click: () => {
 						const form = this.formForFilms;
 						this.formForFilms.showWindow("", function(data) {
-							data.category = categories.getItem(data.category).category;
+							data.categoryID = categories.getItem(data.categoryID).id;
 							films.add(data);
 							form.hideOrNotHide();
 						});
@@ -94,6 +96,11 @@ export default class ListView extends JetView {
 		films.filter();
 		this.formForFilms = this.ui(FormView);
 		webix.extend(this.$getDatatable(), webix.ProgressBar);
+		categories.waitData.then(() => {
+			if (!categories.getFirstId()) {
+				categories.add({"value": "Action"});
+			}
+		});
 	}
 	$getDatatable() {
 		return this.$$("datasetA");

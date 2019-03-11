@@ -14,11 +14,28 @@ app.get('/:id', async function (req, res) {
 	})
 })
 
+app.put('/:id', async (req, res) => {
+	try {
+		await CategoriesModel.findOneAndUpdate(
+			{ _id: req.params.id },
+			{
+				$set: {
+					value: req.body.value,
+				}
+			}
+		);
+	} catch (error) {
+		res.status(500).send("Something broke");
+	}
+})
+
 app.post('/', function (req, res) {
 	let newCategory = new CategoriesModel({
-		category: req.body.category,
+		value: req.body.value,
 	});
-	newCategory.save();
+	newCategory.save(function(err, docs) {
+		res.send(newCategory.toClient());
+	});
 })
 
 app.delete('/:id', async function (req, res) {

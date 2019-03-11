@@ -30,7 +30,7 @@ app.post('/', async (req, res) => {
 			year: req.body.year,
 			votes: req.body.votes,
 			rating: req.body.rating,
-			category: req.body.category,
+			categoryID: req.body.categoryID,
 			photo: req.body.photo
 		});
 		newFilm.save(function(err, docs) {
@@ -52,7 +52,7 @@ app.put('/:id', async (req, res) => {
 					year: req.body.year,
 					votes: req.body.votes,
 					rating: req.body.rating,
-					category: req.body.category,
+					categoryID: req.body.categoryID,
 					photo: req.body.photo
 				}
 			}

@@ -7,7 +7,8 @@ const ModelSchema = new Schema({
   year: Number,
 	votes: Number,
 	rating: Number,
-	category: String,
+	categoryID: String,
+	photo: String
 });
 
 ModelSchema.methods.toClient = function toClient() {

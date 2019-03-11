@@ -11,7 +11,7 @@ export default class ListView extends JetView{
 					localId:"list",
 					width: 400,
 					select: true,
-					template: "#category#",
+					template: "#value#",
 					css:"webix_shadow_medium",
 					on:{
 						onAfterSelect: (category) => {
@@ -31,8 +31,6 @@ export default class ListView extends JetView{
 						{id:"votes",  header:"Votes", sort:"int"},
 						{id:"rating", header:"Rating", sort:"int"},
 					],
-					// editable: true,
-					// editaction: "dblclick",
 					on:{
 						onAfterSelect: (id) => {
 							this.setParam("film", id, true);
@@ -44,7 +42,18 @@ export default class ListView extends JetView{
 					view: "template",
 					localId: "detailedInfo",
 					template:(obj) => {
-						return "<div><span>Film Detailed Info:</span><br></div><div><span class='templateRow'>Title: " + obj.title + "</span><span class='templateRow'>Year: " + obj.year + "</span><span class='templateRow'>Votes: " + obj.votes + "</span><span class='templateRow'>Rating: " + obj.rating + "</span><span>Category: " + obj.category + "</span></div>";
+						let category = "No category";
+						let photo = "";
+						if (!obj.photo) {
+							photo = "<img class='defaultPhotoBig'>";
+						}
+						else {
+							photo = "<img src ="+obj.photo+" class='bigPhoto'>";
+						}
+						if (obj && categories.getItem(obj.categoryID)) {
+							category = categories.getItem(obj.categoryID).value;
+						}
+						return "<div class='detailesBlock'><span class='detailes'>Film Detailed Info:</span><br><span class='templateRow'>Title: " + obj.title + "</span><span class='templateRow'>Year: " + obj.year + "</span><span class='templateRow'>Votes: " + obj.votes + "</span><span class='templateRow'>Rating: " + obj.rating + "</span><span class='templateRow'>Category: " + category + "</span><span>"+ photo +"</span></div>";
 					}
 				}
 			]
@@ -78,7 +87,7 @@ export default class ListView extends JetView{
 		}
 		films.filter(
 			function(obj){
-				return obj.category == categoryValue.category;
+				return obj.categoryID == categoryValue.id;
 			}
 		);
 	}
