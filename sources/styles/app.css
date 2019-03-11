@@ -57,6 +57,50 @@
 	vertical-align:middle;
 }
 
+.detailesBlock {
+
+	width: 1000px
+}
+
+.detailes {
+	font-size: 25px;
+	text-align: center;
+	font-weight: bold;
+}
+
 .templateRow {
 	display: block;
+	padding-top: 10px
+}
+
+.columnSettings {
+	width: 33%;
+	display: inline-block;
+}
+
+.photo {
+	width: 300px;
+}
+
+.smallPhoto {
+	width: 75px;
+	/* height: 300px; */
+}
+
+.bigPhoto {
+	width: 250px;
+}
+
+
+.defaultPhoto {
+	background-color: lightgrey;
+	width: 75px;
+	height: 75px;
+}
+
+.defaultPhotoBig {
+	background-color: lightgrey;
+	margin-top: 15px;
+	width: 250px;
+	height: 250px
 }
