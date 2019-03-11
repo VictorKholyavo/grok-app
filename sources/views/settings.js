@@ -11,7 +11,7 @@ export default class ListView extends JetView {
 					localId: "dataview",
 					template: (obj) => {
 						let photo = "";
-						if (!obj.photo) {
+						if (obj.photo == "defaultPhoto") {
 							photo = "<img class='defaultPhoto'>";
 						}
 						else {
@@ -19,13 +19,13 @@ export default class ListView extends JetView {
 						}
 						return "<div class='columnSettings'>"+ photo +"</div><div class='columnSettings'><span>Title: " + obj.title + "</span></div><div class='columnSettings'><span>Year: " + obj.year + "</span></div>";
 					},
-					xCount:3,
-					type:{
+					xCount: 3,
+					type: {
 						width: 261,
 						height: 90
 					},
 					select: true,
-					on:{
+					on: {
 						onAfterSelect: (id) => {
 							this.setParam("id", id, true);
 						}
@@ -97,6 +97,26 @@ export default class ListView extends JetView {
 							}
 						},
 						{
+							view: "checkbox",
+							localId: "checkbox",
+							labelRight: "Hide picture",
+							value: 1,
+							on: {
+								onItemClick: function() {
+									let template = this.$scope.$$("photo");
+									if (this.data.value) {
+										template.show();
+										this.define({labelRight: "Hide picture"});
+									}
+									else {
+										template.hide();
+										this.define({labelRight: "Show picture"});
+									}
+									this.refresh();
+								}
+							}
+						},
+						{
 							view: "template",
 							localId: "photo",
 							name: "Photo",
@@ -104,6 +124,9 @@ export default class ListView extends JetView {
 								let photo = "";
 								if (obj.src) {
 									photo = "<img class='photo' src="+obj.src+">";
+								}
+								if (obj.src == "defaultPhoto") {
+									photo = "<img class='defaultPhotoBig'>";
 								}
 								return photo;
 							},
@@ -204,6 +227,9 @@ export default class ListView extends JetView {
 	}
 	$getForm() {
 		return this.$$("formSettings");
+	}
+	$getTemplatePhoto() {
+		return this.$$("photo");
 	}
 	init() {
 		films.filter();

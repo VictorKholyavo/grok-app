@@ -83,6 +83,7 @@ export default class ListView extends JetView {
 						const form = this.formForFilms;
 						this.formForFilms.showWindow("", function(data) {
 							data.categoryID = categories.getItem(data.categoryID).id;
+							data.photo = "defaultPhoto";
 							films.add(data);
 							form.hideOrNotHide();
 						});
