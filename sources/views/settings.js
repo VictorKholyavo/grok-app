@@ -17,7 +17,7 @@ export default class ListView extends JetView {
 						else {
 							photo = "<img src ="+obj.photo+" class='smallPhoto'>";
 						}
-						return "<div class='columnSettings'>"+ photo +"</div><div class='columnSettings'><span>Title: " + obj.title + "</span></div><div class='columnSettings'><span>Year: " + obj.year + "</span></div>";
+						return "<div class='columnSettings'>"+ photo +"</div><div class='columnSettings'><span class='dataviewDetailes'>Title: " + obj.title + "</span><span class='dataviewDetailes'> Year: " + obj.year + "</span></div>";
 					},
 					xCount: 3,
 					type: {
@@ -70,7 +70,6 @@ export default class ListView extends JetView {
 									label: "Category",
 									options: {
 										body: {
-										//	template: "#category#",
 											data: categories,
 										}
 									},
@@ -154,7 +153,7 @@ export default class ListView extends JetView {
 									this.$$("photo").setValues({src: response.path});
 								}
 							}
-						},
+						}
 					]
 				},
 			]
@@ -193,27 +192,16 @@ export default class ListView extends JetView {
 			autoheight: false,
 			elements: [
 				{
-					rows: [
+					cols: [
 						{
-							view: "template",
-							template: "Settings",
-							localId: "formTemplate",
-							css: "formTemplate",
-							height: 40
+							view:"tabview",
+							localId:"tabs",
+							cells:[
+								{ header: "Films", body: dataview },
+								{ header: "Categories", body: categoriesDatatable }
+							],
 						},
-						{
-							cols: [
-								{
-									view:"tabview",
-									localId:"tabs",
-									cells:[
-										{ header: "Films", body: dataview },
-										{ header: "Categories", body: categoriesDatatable }
-									],
-								},
 
-							]
-						}
 					]
 				}
 			]

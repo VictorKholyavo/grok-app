@@ -53,7 +53,7 @@ export default class ListView extends JetView{
 						if (obj && categories.getItem(obj.categoryID)) {
 							category = categories.getItem(obj.categoryID).value;
 						}
-						return "<div class='detailesBlock'><span class='detailes'>Film Detailed Info:</span><br><span class='templateRow'>Title: " + obj.title + "</span><span class='templateRow'>Year: " + obj.year + "</span><span class='templateRow'>Votes: " + obj.votes + "</span><span class='templateRow'>Rating: " + obj.rating + "</span><span class='templateRow'>Category: " + category + "</span><span>"+ photo +"</span></div>";
+						return "<div class='detailesBlock'><span class='detailes'>Film Detailed Info:</span><br><span class='templateRow'>Title: " + obj.title + "</span><span class='templateRow'>Year: " + obj.year + "</span><span class='templateRow'>Votes: " + obj.votes + "</span><span class='templateRow'>Rating: " + obj.rating + "</span><span class='templateRow'>Category: " + category + "</span><div class='listPhoto'>"+ photo +"</div></div>";
 					}
 				}
 			]

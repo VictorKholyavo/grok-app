@@ -10,14 +10,13 @@ app.get('/', async (req, res) => {
 		await UsersModel.find({}, null, {sort: order}, function (err, docs) {
 			let start = req.query.start;
 			let count = req.query.count;
-			console.log(docs.length);
 			let arr = [];
 
 			for (let i = start; i < +start + +count && i <= +docs.length; i++) {
 				arr.push(docs[i]);
 			}
 			res.send({"pos": start, "data": arr.map(user => user.toClient()), "total_count": 760});
-		})
+		});
 	} catch (error) {
 		res.status(500).send("Something broke");
 	}
