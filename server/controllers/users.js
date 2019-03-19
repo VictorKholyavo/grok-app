@@ -6,16 +6,12 @@ const mongoose = require('mongoose');
 app.get('/', async (req, res) => {
 	try {
 		let order = req.query.sort ? {name: req.query.sort.name } : {};
-		const users = await UsersModel.find().exec();
-		await UsersModel.find({}, null, {sort: order}, function (err, docs) {
-			let start = req.query.start;
-			let count = req.query.count;
-			let arr = [];
-
-			for (let i = start; i <= +start + +count; i++) {
-				arr.push(docs[i]);
-			}
-			res.send({"pos": start, "data": arr.map(user => user.toClient()), "total_count": 700});
+		let data = [];
+		if (req.query.start && req.query.count) {
+			data =  await UsersModel.find({}, null, {sort: order}).skip(+req.query.start).limit(+req.query.count).exec();
+		}
+		UsersModel.count().exec(function (err, total_count) {
+			res.send({"pos": req.query.start, "data": data.map(doc => doc.toClient()), "total_count": total_count});
 		})
 	} catch (error) {
 		res.status(500).send("Something broke");
