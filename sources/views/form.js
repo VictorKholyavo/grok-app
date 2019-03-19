@@ -34,13 +34,12 @@ export default class FormView extends JetView {
 					label: "Rating"
 				},
 				{
-					view: "combo",
+					view: "richselect",
+					name: "categoryID",
 					localId: "category",
-					name: "category",
 					label: "Category",
 					options: {
 						body: {
-							template: "#category#",
 							data: categories,
 						}
 					},
